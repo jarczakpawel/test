@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!--
+/**
+* BSS Commerce Co.
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the EULA
+* that is bundled with this package in the file LICENSE.txt.
+* It is also available through the world-wide-web at this URL:
+* http://bsscommerce.com/Bss-Commerce-License.txt
+*
+* @category   BSS
+* @package    Bss_ConfiguableGridView
+* @author     Extension Team
+* @copyright  Copyright (c) 2018-2020 BSS Commerce Co. ( http://bsscommerce.com )
+* @license    http://bsscommerce.com/Bss-Commerce-License.txt
+*/
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="bss" translate="label" sortOrder="300">
+            <label>Bss Commerce</label>
+        </tab>
+        <section id="configuablegridview" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Configurable Grid Table View</label>
+            <tab>bss</tab>
+            <resource>Bss_ConfiguableGridView::config_configuablegridview</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Options</label>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Choose 'yes' to enable module. Version 1.2.9]]></comment>
+                </field>
+                <field id="advanced_tier_price" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Advanced Tier Price</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="table_tier_price" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Table Tier Price</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="tooltip_tier_price" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Tooltip Tier Price</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="stock_availability" type="select" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Display Stock Availability</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled the products qty column will be enabled in configurable grid view table.]]></comment>
+                </field>
+                <field id="stock_numer" type="select" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Display Stock Number</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="stock_availability">1</field>
+                    </depends>
+                </field>
+                <field id="out_stock" type="select" translate="label" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Display Out of Stock Product</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="stock_availability">1</field>
+                    </depends>
+                    <comment><![CDATA[If enabled, the products have Stock Availability = "Out of stock" will be displayed in the configurable grid view table.]]></comment>
+                </field>
+                <field id="sku" type="select" translate="label" sortOrder="26" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Display Product SKU</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled the products SKU column will be enabled in configurable grid view table.]]></comment>
+                </field>
+                <field id="subtotal" type="select" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Subtotal</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, subtotal column will be displayed in the configurable grid view table.]]></comment>
+                </field>
+                <field id="unit_price" type="select" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Unit Price</label>
+                    <source_model>Bss\ConfiguableGridView\Model\Config\Source\UnitPrice</source_model>
+                    <comment><![CDATA[If enabled the products unit price column will be enabled in configurable grid view table.]]></comment>
+                </field>
+                <field id="detailed_total" type="select" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Detailed Total</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="disabled_customer_group" translate="label" type="multiselect" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Disable For Customer Group</label>
+                    <source_model>Bss\ConfiguableGridView\Model\Config\Group</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="tablet" type="multiselect" translate="label" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Hide Columns on Tablet</label>
+                    <source_model>Bss\ConfiguableGridView\Model\Config\Source\Attribute</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="mobile" type="multiselect" translate="label" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Hide Columns on Mobile</label>
+                    <source_model>Bss\ConfiguableGridView\Model\Config\Source\Attribute</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

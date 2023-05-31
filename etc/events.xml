@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * BSS Commerce Co.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://bsscommerce.com/Bss-Commerce-License.txt
+ *
+ * @category  BSS
+ * @package   Bss_ConfigurableProductWholesale
+ * @author    Extension Team
+ * @copyright Copyright (c) 2017-2018 BSS Commerce Co. ( http://bsscommerce.com )
+ * @license   http://bsscommerce.com/Bss-Commerce-License.txt
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="checkout_cart_product_add_after">
+        <observer name="bss_configurableproductwholesale_set_tierprice_for_item_add" instance="Bss\ConfiguableGridView\Observer\SetTierPriceForItem" />
+    </event>
+    <event name="checkout_cart_update_items_after">
+        <observer name="bss_configurableproductwholesale_set_tierprice_for_cart_update" instance="Bss\ConfiguableGridView\Observer\SetPriceForCart" />
+    </event>
+    <event name="sales_quote_remove_item">
+        <observer name="bss_configurableproducttableview_set_tierprice_for_item_update" instance="Bss\ConfiguableGridView\Observer\SetPriceForCart" />
+    </event>
+    <event name="wishlist_add_product">
+        <observer name="bss_add_new_wishlist" instance="Bss\ConfiguableGridView\Observer\WishListAdd" />
+    </event>
+    <event name="checkout_cart_product_update_after">
+        <observer name="bss_configurableproduct_set_tierprice_for_item_update_cart" instance="Bss\ConfiguableGridView\Observer\SetTierPriceForItem" />
+    </event>
+    <event name="checkout_onepage_controller_success_action">
+        <observer name="bss_after_checkout_success" instance="Bss\ConfiguableGridView\Observer\CheckoutSuccess" />
+    </event>
+</config>

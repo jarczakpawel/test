@@ -1,0 +1,105 @@
+<?php
+/**
+ * BSS Commerce Co.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://bsscommerce.com/Bss-Commerce-License.txt
+ *
+ * @category   BSS
+ * @package    Bss_ConfiguableGridView
+ * @author     Extension Team
+ * @copyright  Copyright (c) 2018-2019 BSS Commerce Co. ( http://bsscommerce.com )
+ * @license    http://bsscommerce.com/Bss-Commerce-License.txt
+ */
+/** @var \Magento\Catalog\Pricing\Render\FinalPriceBox $block */
+// @codingStandardsIgnoreFile
+
+$productId = $block->getSaleableItem()->getId();
+
+/** @var \Magento\Catalog\Pricing\Price\RegularPrice $priceModel */
+$priceModel = $block->getPriceType('regular_price');
+
+/** @var \Magento\Catalog\Pricing\Price\FinalPrice $finalPriceModel */
+$finalPriceModel = $block->getPriceType('final_price');
+$idSuffix = $block->getIdSuffix() ? $block->getIdSuffix() : '';
+$schema = ($block->getZone() == 'item_view') ? true : false;
+$helper = $this->helper('Bss\ConfiguableGridView\Helper\Data');
+?>
+
+<?php if(!is_null($helper->getCurrentProduct()) && $helper->getCurrentProduct()->getTypeId() == 'configurable' && $helper->isEnabled()): ?>
+    <?php if((float) $helper->getMinPrice() == (float) $helper->getMaxPrice()) :?>
+        <span class="unit-price">
+            <p class="bss-price-unit">
+                <span class="price-container">
+                    <span class=""><b><?php echo __('Unit Price: '); ?></b> <?php echo $helper->getDisplayPriceWithCurrency($helper->getMinPrice()) ?></span>
+                </span>
+            </p>
+        </span>
+        <?php if ($block->hasSpecialPrice()): ?>
+            <span class="old-price">
+                <?php /* @escapeNotVerified */ echo $block->renderAmount($priceModel->getAmount(), [
+                    'display_label'     => __('Regular Price'),
+                    'price_id'          => $block->getPriceId('old-price-' . $idSuffix),
+                    'price_type'        => 'oldPrice',
+                    'include_container' => true,
+                    'skip_adjustments'  => true
+                    ]); ?>
+            </span>
+        <?php endif; ?>
+    <?php endif; ?>
+<?php else: ?>
+    <?php if ($block->hasSpecialPrice()): ?>
+        <span class="special-price">
+            <?php /* @escapeNotVerified */ echo $block->renderAmount($finalPriceModel->getAmount(), [
+                'display_label'     => __('Special Price'),
+                'price_id'          => $block->getPriceId('product-price-' . $idSuffix),
+                'price_type'        => 'finalPrice',
+                'include_container' => true,
+                'schema' => $schema
+                ]); ?>
+        </span>
+        <span class="old-price">
+            <?php /* @escapeNotVerified */ echo $block->renderAmount($priceModel->getAmount(), [
+                'display_label'     => __('Regular Price'),
+                'price_id'          => $block->getPriceId('old-price-' . $idSuffix),
+                'price_type'        => 'oldPrice',
+                'include_container' => true,
+                'skip_adjustments'  => true
+                ]); ?>
+        </span>
+    <?php else: ?>
+        <?php /* @escapeNotVerified */ echo $block->renderAmount($finalPriceModel->getAmount(), [
+            'price_id'          => $block->getPriceId('product-price-' . $idSuffix),
+            'price_type'        => 'finalPrice',
+            'include_container' => true,
+            'schema' => $schema
+            ]); ?>
+    <?php endif; ?>
+<?php endif; ?>
+
+<?php if($helper->getCurrentProduct() && $helper->getCurrentProduct()->getTypeId() == 'configurable' && $helper->isEnabled()) : ?>
+    <?php if((float) $helper->getMinPrice() != (float) $helper->getMaxPrice()) : ?>
+        <p class="bss-price-from">
+            <span class="price-container">
+                <span class=""><b>From:</b> <?php echo $helper->getDisplayPriceWithCurrency($helper->getMinPrice()) ?></span>
+                <span class=""><b>To:</b> <?php echo $helper->getDisplayPriceWithCurrency($helper->getMaxPrice()) ?></span>
+            </span>
+        </p>
+    <?php endif; ?>
+<?php endif; ?>
+
+<?php if ($block->showMinimalPrice()): ?>
+    <?php if ($block->getUseLinkForAsLowAs()):?>
+        <a href="<?php /* @escapeNotVerified */ echo $block->getSaleableItem()->getProductUrl(); ?>" class="minimal-price-link">
+            <?php /* @escapeNotVerified */ echo $block->renderAmountMinimal(); ?>
+        </a>
+    <?php else:?>
+        <span class="minimal-price-link">
+            <?php /* @escapeNotVerified */ echo $block->renderAmountMinimal(); ?>
+        </span>
+    <?php endif?>
+<?php endif; ?>

@@ -1,0 +1,364 @@
+<?php
+/**
+ * BSS Commerce Co.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://bsscommerce.com/Bss-Commerce-License.txt
+ *
+ * @category   BSS
+ * @package    Bss_ConfiguableGridView
+ * @author     Extension Team
+ * @copyright  Copyright (c) 2018-2019 BSS Commerce Co. ( http://bsscommerce.com )
+ * @license    http://bsscommerce.com/Bss-Commerce-License.txt
+ */
+
+// @codingStandardsIgnoreFile
+use Bss\ConfiguableGridView\Block\Product\View\Configurable;
+
+/**
+ * Note: Fix condition check pre_order. All other logic not changed.
+ * @var Configurable $block
+ */
+$product = $block->getProduct();
+$maxPrice = 0;
+$attributes = $block->decorateArray($block->getAllowAttributes());
+$helper = $this->helper('Bss\ConfiguableGridView\Helper\Data');
+/** @var \Bss\PreOrder\Helper\Data $helper_preorder */
+$helper_preorder = $this->helper('Bss\PreOrder\Helper\Data');
+$is_preorder = $helper_preorder->isEnable();
+?>
+
+<?php if ($product->isSaleable() && count($attributes)): ?>
+
+    <?php
+    $array = [];
+    $assc_product_data = $block->getConfiguableGridViewData();
+    $quoteArray = [];
+    if ($helper->getCurrentUrl() != 'catalog_product_view') {
+        $cart = $block->getQuote()->getAllItems();
+        foreach ($cart as $key => $item) {
+            if (!empty($item->getParentItemId()) && $item->getParentItem()->getProductId() == $product->getId()) {
+                $quoteArray[$item->getProductId()]['item_id'] = $item->getParentItem()->getId();
+                $quoteArray[$item->getProductId()]['qty'] = $item->getParentItem()->getQty();
+            }
+        }
+    }
+    ?>
+    <?php
+    $productVal["disable_add_to_cart"] = false;
+    $disableGridView = $block->disableGirdView();
+    $dataChildProduct = $block->dataChildProduct();
+    $advancedTierPrice = $block->advancedTierPrice($dataChildProduct);
+    $dataProduct = $block->dataProduct($advancedTierPrice);
+    $messageTierPrice = $block->messageTierPrice($advancedTierPrice);
+    $tableTierPrice = $block->tableTierPrice($dataChildProduct);
+    $configATPrice = $block->configATPrice();
+    $typeTax = $block->getTypeTax();
+    $configTableTP = $block->configTableTierPrice();
+    if (is_array($tableTierPrice) && count($tableTierPrice) > 0):?>
+        <div class="tier-pricing">
+            <div class="table-tier">
+                <table class="tier-table-price">
+                    <thead>
+                    <th><?= $block->escapeHtml(__("SKU")); ?></th>
+                    <th><?= $block->escapeHtml(__("Qty")); ?></th>
+                    <th><?= $block->escapeHtml(__("Unit Price")); ?></th>
+                    <th><?= $block->escapeHtml(__("Save")); ?></th>
+                    </thead>
+                    <?php
+                    foreach ($tableTierPrice as $tierPrice):
+                        ?>
+                        <tr>
+                            <td class="sku">
+                                <?php
+                                foreach ($tierPrice["attributes_tier_price"] as $key => $sku):?>
+                                    <?php if ($key == 0): ?>
+                                        <?= $block->escapeHtml(__($sku)); ?>
+                                    <?php else: ?>
+                                        <br>
+                                        <?= $block->escapeHtml(__($sku)); ?>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </td>
+                            <td class="qty">
+                                <?php echo $tierPrice["qty"]; ?>
+                            </td>
+                            <td class="price">
+                                <?php
+                                echo $tierPrice["price"];
+                                ?>
+                            <td class="save">
+                                <?= $block->escapeHtml(__($tierPrice["save"])) ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            </div>
+        </div>
+
+    <?php endif; ?>
+    <?php if ($disableGridView) {
+        echo $block->toHtmlCP();
+        return;
+    } ?>
+    <div id="bss_configurablegridview" class="cart table-wrapper">
+        <input type="hidden" name="configurable_grid_table" value="Yes"/>
+        <div class="configu-table">
+            <div class="content-config">
+                <table class="configurable-product-table cart items data table">
+                    <thead>
+                    <tr class="first last">
+                        <?php foreach ($attributes as $attribute) : ?>
+                            <th class="qty attributes"><?php echo $block->escapeHtml($attribute->getProductAttribute()->getStoreLabel()); ?></th>
+                        <?php endforeach ?>
+                        <?php if ($helper->isShowConfig('stock_availability')) : ?>
+                            <th class="qty avaibility <?php echo $helper->getDisplayAttributeAdvanced('availability') ?>"><?php echo __('Availability'); ?></th>
+                        <?php endif ?>
+                        <?php if ($helper->isShowConfig('sku')) : ?>
+                            <th class="qty sku <?php echo $helper->getDisplayAttributeAdvanced('sku') ?>"><?php echo __('SKU'); ?></th>
+                        <?php endif ?>
+
+                        <?php if ($helper->canShowUnit()) : ?>
+                            <th class="qty unit <?php echo $helper->getDisplayAttributeAdvanced('unit_price') ?>"><?php echo __('Unit Price'); ?></th>
+                        <?php endif ?>
+                        <?php if ($helper->isShowConfig('subtotal')) : ?>
+                            <th class="qty subtotal <?php echo $helper->getDisplayAttributeAdvanced('subtotal') ?>"><?php echo __('Subtotal'); ?></th>
+                        <?php endif ?>
+                        <?php if (!$block->getProduct()->getDisableAddToCart()): ?>
+                            <th class="qty"><?php echo __('Qty'); ?></th>
+                        <?php endif ?>
+                        <th class="no-display hidden"></th>
+                    </tr>
+                    </thead>
+                    <tbody class="cart item">
+                    <?php $i = 0; ?>
+
+                    <?php foreach ($assc_product_data as $productVal) : ?>
+                        <tr class="item-info" data-product-id="<?php echo $productVal['product_id'] ?>"
+                            product_id="<?php echo $productVal["product_id"] ?>" index="<?php echo $i ?>">
+                            <?php foreach ($productVal['attributes'] as $attribute_id => $attribute) : ?>
+                                <td class="qty first-attr bss-swatch" attribute-code="<?php echo $attribute['code']; ?>"
+                                    attribute-value="<?php echo $attribute['id']; ?>"
+                                    attribute-id="<?php echo $attribute_id; ?>">
+								<span class="attr-label">
+	                                <?php
+                                    echo $attribute['label'];
+                                    ?>
+	                            </span>
+                                    <input type="hidden"
+                                           name="bss_super_attribute[<?php echo $i ?>][<?php echo $attribute_id ?>]"
+                                           value="<?php echo $attribute['id'] ?>" class="swatch-attribute">
+                                </td>
+                            <?php endforeach ?>
+
+                            <?php if ($helper->isShowConfig('stock_availability')) : ?>
+
+                                <?php if ($helper->isShowConfig('stock_numer')) : ?>
+                                    <?php
+                                        $isAvailableDate = $helper_preorder->isAvailablePreOrder($productVal['product_id']); // Availability Date
+                                        $isSetPreOrder = $productVal['preorder']; // Pre order status
+                                        $isSalable = $helper_preorder->isSalable($productVal['sku'], $productVal['stock']['stock_id']);
+                                        // Condition: $isAvailableDate true => pre order
+                                        // $isAvailableDate false, $isSetPreOrder = 2, $isOutOfStock = true => pre order
+                                    ?>
+                                    <?php if ($is_preorder && (($isAvailableDate && $isSetPreOrder == 1) || ($isSetPreOrder == 2 && !$isSalable))): ?>
+                                        <td class="qty pre_order_col <?php echo $helper->getDisplayAttributeAdvanced('availability') ?>">
+                                        <span class="mess-preorder">
+                                            <a href="#" class="tooltip-toggle"><?= __('Pre Order') ?></a>
+                                            <?php if ($helper_preorder->getAvailabilityMessageByPid($productVal['product_id'])): ?>
+                                                <span class="tooltip-content"><?= __($helper_preorder->getAvailabilityMessageByPid($productVal['product_id'])) ?></span>
+                                            <?php else: ?>
+                                                <span class="tooltip-content"><?= __('Available: Pre Order') ?></span>
+                                            <?php endif; ?>
+                                        </span>
+                                        </td>
+                                    <?php elseif ((int)$productVal['stock']['is_in_stock'] == 1) : ?>
+                                        <?php if ((int)$productVal['stock']['use_config_manage_stock'] == 1 || ((int)$productVal['stock']['use_config_manage_stock'] == 0 && (int)$productVal['stock']['manage_stock'] == 1)) : ?>
+                                            <td class="qty <?php echo $helper->getDisplayAttributeAdvanced('availability') ?>"><?php echo (int)$productVal['stock']['qty'] ?></td>
+                                        <?php else : ?>
+                                            <td class="qty <?php echo $helper->getDisplayAttributeAdvanced('availability') ?>">
+                                                <span class="stock-infinity">∞</span></td>
+                                        <?php endif ?>
+                                    <?php else: ?>
+                                        <td class="qty <?php echo $helper->getDisplayAttributeAdvanced('availability') ?>">
+                                            <b><?php echo 'Out of Stock'; ?></b></td>
+                                    <?php endif ?>
+
+                                <?php else : ?>
+
+                                    <td class="qty <?php echo $helper->getDisplayAttributeAdvanced('availability') ?>"><?php echo((int)$productVal['stock']['is_in_stock'] == 1 ? 'In Stock' : 'Out of Stock'); ?></td>
+                                <?php endif ?>
+
+                            <?php endif ?>
+
+                            <?php if ($helper->isShowConfig('sku')) : ?>
+                                <td class="qty sku <?php echo $helper->getDisplayAttributeAdvanced('sku') ?>"><?php echo $productVal['sku']; ?></td>
+                            <?php endif ?>
+                            <?php if ($block->canShowUnit()): ?>
+                                <td class="qty <?php echo $helper->getDisplayAttributeAdvanced('unit_price') ?>"
+                                    id="<?php echo 'unit-price-' . $productVal["product_id"]; ?>">
+                                    <div><?php echo $productVal["html_unit_price"]; ?></div>
+                                </td>
+                            <?php endif; ?>
+
+                            <?php if ($helper->isShowConfig('subtotal')) : ?>
+                                <td class="qty subtotal <?php echo $helper->getDisplayAttributeAdvanced('subtotal') ?>">
+                                    <span class="final-price"
+                                          id='<?php echo "final-price-" . $productVal["product_id"]; ?>'><?php echo $helper->getDisplayPriceWithCurrency(0) ?></span><br>
+                                    <span class="excl-tax"
+                                          id='<?php echo "excl-tax-" . $productVal["product_id"]; ?>'></span>
+                                </td>
+                            <?php endif ?>
+                            <?php if (!$productVal["disable_add_to_cart"]): ?>
+                                <td class="qty qty-final">
+                                    <?php
+                                        $isAvailableDate = $helper_preorder->isAvailablePreOrder($productVal['product_id']); // Availability Date
+                                        $isSetPreOrder = $productVal['preorder']; // Pre order status
+                                        $isSalable = $helper_preorder->isSalable($productVal['sku'], $productVal['stock']['stock_id']);
+                                        // Condition: $isAvailableDate true => pre order
+                                        // $isAvailableDate false, $isSetPreOrder = 2, $isOutOfStock = true => pre order
+                                    ?>
+                                    <?php if ($is_preorder && (($isAvailableDate && $isSetPreOrder == 1) || ($isSetPreOrder == 2 && !$isSalable))) { ?>
+                                        <input type="text"
+                                               class="qty_att_product input-text qty validate-not-negative-number required-entry"
+                                               id="super_group_qty_<?php echo $i ?>" value="0"
+                                               name="config_table_qty[<?php echo $i ?>]" index="<?php echo $i ?>"
+                                               productId="<?php echo $productVal['product_id']; ?>"/>
+                                    <?php } else { ?>
+                                        <?php if (!empty($quoteArray[$productVal['stock']['product_id']])) : ?>
+                                            <input type="text"
+                                                   class="qty_att_product input-text qty validate-not-negative-number required-entry"
+                                                   id="super_group_qty_<?php echo $i ?>"
+                                                   value="<?php echo $quoteArray[$productVal['stock']['product_id']]['qty'] ?>"
+                                                   name="config_table_qty[<?php echo $i ?>]" <?php echo ((int)$productVal['stock']['is_in_stock'] == 1) ? '' : 'disabled' ?>
+                                                   index="<?php echo $i ?>"
+                                                   productId="<?php echo $productVal['product_id']; ?>"/>
+                                            <div class="bss-tier-detailed hide"
+                                                 id='<?php echo "bss-tier-detailed-" . $productVal["product_id"] ?>'>
+                                                <div class="prices-tier items">
+                                                    <ul class="prices-tier items"
+                                                        id='<?php echo "tier-price-" . $productVal["product_id"] ?>'></ul>
+                                                </div>
+                                            </div>
+                                        <?php else : ?>
+                                            <input type="text"
+                                                   class="qty_att_product input-text qty validate-not-negative-number required-entry"
+                                                   id="super_group_qty_<?php echo $i ?>" value="0"
+                                                   name="config_table_qty[<?php echo $i ?>]" <?php echo ((int)$productVal['stock']['is_in_stock'] == 1) ? '' : 'disabled' ?>
+                                                   index="<?php echo $i ?>"
+                                                   productId="<?php echo $productVal['product_id']; ?>"/>
+                                            <div class="bss-tier-detailed hide"
+                                                 id='<?php echo "bss-tier-detailed-" . $productVal["product_id"] ?>'>
+                                                <div class="prices-tier items">
+                                                    <ul class="prices-tier items"
+                                                        id='<?php echo "tier-price-" . $productVal["product_id"] ?>'></ul>
+                                                </div>
+                                            </div>
+                                        <?php endif ?>
+                                    <?php } ?>
+                                    <input type="hidden" class="unit-price"
+                                           value="<?php echo $productVal['price']['finalPrice'] ?>"/>
+                                    <input type="hidden" id="child_product_id_cf_<?php echo $i ?>"
+                                           value="<?php echo $productVal['product_id'] ?>"
+                                           name="config_table_product_id[<?php echo $i ?>]" index="<?php echo $i ?>"/>
+                                    <?php $array[$i][0] = $productVal['price']['finalPrice']; ?>
+                                    <?php $array[$i]['old'] = $productVal['price']['old_price']; ?>
+                                    <?php $array[$i]['excl_tax'] = $productVal['price']['excl_tax']; ?>
+                                    <?php
+                                    if ($productVal['price']['old_price'] > $maxPrice) {
+                                        $maxPrice = $productVal['price']['old_price'];
+                                    }
+                                    ?>
+                                    <?php if (isset($productVal['tier_price'])): ?>
+                                        <?php $array[$i]['tier_price'] = $productVal['tier_price']; ?>
+                                    <?php endif; ?>
+                                </td>
+                            <?php endif ?>
+                            <td class="no-display hidden">
+                                <input type="hidden"
+                                       value="<?php echo(!empty($quoteArray[$productVal['stock']['product_id']]) ? $quoteArray[$productVal['stock']['product_id']]['item_id'] : '') ?>"
+                                       name="quote_item_id[<?php echo $i ?>]"/>
+                            </td>
+                        </tr>
+                        <?php $i++; ?>
+                    <?php endforeach ?>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="reset-configurablegridview"><img title="Reset" class="v-middle " alt="reset"
+                                                         src="<?php echo $block->getViewFileUrl('Bss_ConfiguableGridView::images/ico_reset.png'); ?>"/>
+            </div>
+
+            <input type="hidden" name="" id="bss_link_wishlist"
+                   value="<?php echo $this->getUrl('wishlist/index/add') ?>">
+            <?php if ((float)$block->getMinPrice() != (float)$block->getMaxPrice()) : ?>
+                <div id="bss-price-range" style="display: none">
+                    <div class="bss-price-range">
+                        <div class="bss-price-range">
+                            <div class="price-from">
+                                <span><?php echo __('From:') ?></span> <?php echo $block->getHtmlMinPrice($assc_product_data); ?>
+                            </div>
+                            <div class="price-to">
+                                <span><?php echo __('To:') ?></span> <?php echo $block->getHtmlMaxPrice($assc_product_data); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <?php $dataProduct = $block->jsonDataProduct($dataProduct); ?>
+            <script type="text/x-magento-init">
+		{
+		    "*": {
+		        "Bss_ConfiguableGridView/js/swatch/configurable": {
+		            "configuable_qty_price_array": <?php echo json_encode($array, JSON_FORCE_OBJECT); ?>,
+		            "jsonSwatchConfig": <?php /* @escapeNotVerified */
+                echo $swatchOptions = $block->getJsonSwatchConfig(); ?>,
+		            "jsonAttrLabelConfig": <?php /* @escapeNotVerified */
+                echo $block->getJsonAttrLabelConfig(); ?>,
+		            "jsonConfig":<?php /* @escapeNotVerified */
+                echo $swatchOptions = $block->getJsonConfig(); ?>,
+		            "mediaCallback":"<?php /* @escapeNotVerified */
+                echo $block->getMediaCallback() ?>",
+		            "onlyMainImg":"<?php /* @escapeNotVerified */
+                echo $block->getVar('change_only_base_image', 'Magento_Swatches') ?: 'false'; ?>",
+		            "magentoVersion":"<?php echo $block->getCurentVersion(); ?>",
+		            "configuable_price_old":"<?php echo $product->getFinalPrice(); ?>",
+		            "configuable_currency_symbol": "<?php echo $block->getCurrencySymbol(); ?>",
+		            "showTotalDetailed": "<?php echo $block->isShowConfig("detailed_total"); ?>",
+		            "configuable_price_regular_old": "<?php echo $maxPrice; ?>",
+		            "isDisplayBothPrices": "<?php echo $block->isDisplayBothPrices(); ?>",
+		             "messageTierPrice":<?php echo $messageTierPrice ?>,
+		            "dataProduct":<?php echo $dataProduct ?>,
+		            "configATPrice":<?php echo $configATPrice ?>,
+		            "configTableTP":<?php echo $configTableTP ?>
+	            }
+            }
+        }
+            </script>
+            <?php if (!$productVal["disable_add_to_cart"]): ?>
+                <div id="bss-total-check-show" class="hidden" style="display: none">
+                    <div class="total-area">
+                        <div class="qty-detail"></div>
+                        <div class="qty-total"><span class="label"><b><?= __('Total Qty:') ?>
+                </b></span><span class="value">0</span></div>
+                        <div class="price-total"><span class="label">
+                    <b><?= __('Total:') ?></b></span>
+                            <span class="value"><?= $helper->getDisplayPriceWithCurrency(0) ?></span><br>
+                            <span class="total-excl-tax"></span>
+                        </div>
+                    </div>
+                </div>
+            <?php endif ?>
+        </div>
+    </div>
+
+    <script id="bss-configurable-price-excl-tax" type="text/x-magento-template">
+        <span class="price-excl-title"><%- data.title %></span><span class="price-excl-price"><%- data.price %></span>
+    </script>
+<?php endif; ?>

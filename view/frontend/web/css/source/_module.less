@@ -1,0 +1,545 @@
+/**
+ * BSS Commerce Co.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://bsscommerce.com/Bss-Commerce-License.txt
+ *
+ * @category   BSS
+ * @package    Bss_ConfiguableGridView
+ * @author     Extension Team
+ * @copyright  Copyright (c) 2018-2019 BSS Commerce Co. ( http://bsscommerce.com )
+ * @license    http://bsscommerce.com/Bss-Commerce-License.txt
+ */
+@color_1: #333;
+& when (@media-common = true) {
+    @-moz-document url-prefix() {
+        .product-add-form {
+            table {
+                thead {
+                    position: relative;
+                    top: -1px;
+                }
+            }
+        }
+    }
+
+    .product-info-main {
+        .old-price {
+            .price-label {
+                display: none !important;
+            }
+
+            .price {
+                text-decoration: line-through;
+            }
+        }
+
+        .bss-price-range {
+            .special-price {
+                float: right;
+            }
+
+            .old-price {
+                float: left;
+                padding-right: 15px;
+            }
+        }
+    }
+
+    .product-add-form {
+        .tier-pricing {
+            margin-bottom: 42px;
+        }
+
+        .title-tier {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #333;
+            margin: 2px 0 17px;
+        }
+
+        table {
+            thead {
+                border-bottom: 1px solid #c1c1c1;
+
+                tr {
+                    th {
+                        text-transform: uppercase;
+                        font-size: 12px;
+                        text-align: center;
+                        color: #333;
+                        z-index: 2;
+
+                        &:first-child {
+                            padding-left: 0;
+                            text-align: left;
+                        }
+
+                        &:last-child {
+                            padding-right: 0;
+                        }
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+                    td {
+                        font-size: 12px;
+                        text-align: center;
+                        padding-top: 11px !important;
+                        vertical-align: middle;
+
+                        .price-container {
+                            .price {
+                                font-size: 12px;
+                            }
+                        }
+
+                        &:first-child {
+                            padding-left: 0;
+                            text-align: left;
+                            border-top: 0;
+                        }
+
+                        &:last-child {
+                            padding-right: 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        .configu-table {
+            border: 1px solid #c1c1c1;
+            padding: 30px 0 45px;
+            position: relative;
+            border-bottom: 0;
+
+            .content-config {
+                padding: 0 10px;
+                margin: 0 10px;
+                border-bottom: 1px solid #c1c1c1;
+            }
+
+            .fieldset {
+                margin: 0;
+
+                &:last-child {
+                    margin: 0;
+                }
+            }
+
+            table {
+                tbody {
+                    tr {
+                        td {
+                            border-bottom: 1px solid #c1c1c1 !important;
+                            vertical-align: middle;
+                            padding-top: 11px;
+
+                            .swatch-attribute-options {
+                                margin: 0;
+                            }
+
+                            &:nth-last-child(2) {
+                                padding-right: 0;
+                            }
+
+                        }
+
+                        &:last-child {
+                            td {
+                                border-bottom: none !important;
+                            }
+                        }
+
+                        &:first-child {
+                            td {
+                                &.qty-final {
+                                    .bss-tier-detailed {
+                                        top: 85%;
+                                        bottom: inherit;
+
+                                        &:before {
+                                            top: -7px;
+                                            bottom: inherit;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .total-area,
+        .box-cart-new {
+            border-left: 1px solid #c1c1c1;
+            border-right: 1px solid #c1c1c1;
+        }
+
+        .box-cart-new {
+            border-bottom: 1px solid #c1c1c1;
+            position: relative;
+            top: -40px;
+            padding: 10px;
+        }
+
+        .total-area {
+            padding: 0px 10px 20px;
+            position: relative;
+            top: -40px;
+        }
+
+        .reset-configurablegridview {
+            position: absolute;
+            top: 13px;
+            right: 20px;
+
+            &.right-reset {
+                right: 40px;
+            }
+        }
+
+        .cart {
+            &.table-wrapper {
+                .cart {
+                    & > .item {
+                        border-bottom: none;
+                    }
+                }
+            }
+        }
+
+        .box-cart-new {
+            margin: 0 !important;
+
+            .fieldset {
+                &:last-child {
+                    margin: 0;
+                }
+            }
+        }
+    }
+
+    .content-detail-qty {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #c1c1c1;
+        padding-bottom: 20px;
+
+        #qty-selected-detail-table {
+            border-bottom: 0;
+        }
+    }
+
+    .minicart-wrapper {
+        .product {
+            .actions {
+                position: relative;
+                right: 0;
+                top: -30px;
+                margin: 0;
+            }
+        }
+    }
+
+    .configurable-product-table {
+        .qty {
+            position: relative;
+        }
+    }
+
+
+    .bss-tier-detailed {
+        position: absolute;
+        right: 0px;
+        bottom: 76%;
+        min-width: 55px;
+        border-radius: 8px;
+        border: 1px solid #1979c3;
+        color: #FFF;
+        background: #0673ba;
+        padding: 7px 15px;
+        pointer-events: none;
+        z-index: 10;
+        max-width:265px;
+        width: max-content;
+
+        &:before {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background-color: #0673ba;
+            transform: rotate(45deg);
+            position: absolute;
+            bottom: -7px;
+            right: 27px;
+        }
+
+        .items {
+            margin: 0;
+            background-color: #0673ba;
+            padding: 0;
+        }
+
+        .item {
+            margin: 0 0 5px 0!important ;
+            font-weight: 100;
+            line-height:14px;
+        }
+    }
+
+    .hide {
+        display: none;
+    }
+
+    .bss-swatch {
+        .swatch-option {
+            display: inline-block;
+            float: none;
+            margin: 0;
+        }
+
+        .swatch-attribute-options {
+            margin-top: 0;
+        }
+    }
+
+    .bss-hidden {
+        display: none !important;
+    }
+
+    .bss-selected {
+        outline: 2px solid #FF5100;
+        border: 1px solid #fff;
+        color: @color_1;
+    }
+
+    .total-area {
+        margin-top: 20px;
+        .value {
+            font-weight:100;
+        }
+    }
+
+    #qty-selected-detail-table {
+        border-bottom: 1px solid #c1c1c1;
+
+        td {
+            padding: 0;
+        }
+
+        td.a-right {
+            text-align: right;
+        }
+
+        .swatch-option {
+            border: none;
+            cursor: default;
+        }
+
+        .swatch-option.color {
+            &:hover {
+                border: none;
+                outline: none;
+            }
+        }
+    }
+
+    .product-info-price {
+        .price-box {
+            width: auto !important;
+        }
+    }
+
+    div.unit-old {
+        text-decoration: line-through;
+    }
+
+    #bss_configurablegridview {
+        border: none;
+        .col {
+            &.qty {
+                padding:11px 10px;
+                text-align: left;
+                &:first-child {
+                    padding-left:0;
+                }
+            }
+        }
+    }
+
+    input.qty_att_product {
+        width: 45px;
+    }
+
+    img.v-middle.reset-configurablegridview {
+        cursor: pointer;
+    }
+
+    .item-info td.qty .stock-infinity {
+        font-size: x-large;
+    }
+
+    .price-excl-title {
+        font-size: 1.1rem;
+    }
+
+    .price-excl-price {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .mess-preorder {
+        .lib-tooltip(top);
+    }
+}
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__l) {
+    .bss-tablet-hide {
+        display: table-cell;
+    }
+    .bss-tier-detailed {
+        max-width:265px;
+    }
+    .product-add-form {
+        .configu-table {
+            padding:30px 0 45px;
+            margin-bottom: 0px;
+            .content-config {
+                margin:0 10px;
+            }
+        }
+        .total-area,
+        .box-cart-new {
+            border-left: 1px solid #c1c1c1;
+            border-right: 1px solid #c1c1c1;
+        }
+        .box-cart-new {
+            border-bottom:1px solid #c1c1c1;
+        }
+    }
+    .table-tier {
+        padding:0;
+        border:0;
+        overflow-x:auto;
+        table {
+            tbody {
+                tr {
+                    td {
+                        border-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+}
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .bss-tablet-hide {
+        display: none;
+    }
+    .bss-tier-detailed {
+        max-width:200px;
+    }
+    .table-tier {
+        padding: 0 20px;
+        border: 1px solid #c1c1c1;
+        table {
+            tbody {
+                tr {
+                    td {
+                        border-bottom: 1px solid #c1c1c1;
+                    }
+                    &:last-child {
+                        td {
+                            border-bottom:0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .product-add-form {
+        .configu-table {
+            padding:30px 0 0;
+            margin-bottom: 80px;
+            .content-config {
+                margin:0;
+            }
+        }
+        .total-area,
+        .box-cart-new {
+            border:0;
+        }
+    }
+    .box-tocart {
+        .action {
+            &.tocart {
+                padding: 14px 0;
+            }
+        }
+    }
+}
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+    .bss-mobile-hide {
+        display: none;
+    }
+    .product-add-form {
+        .reset-configurablegridview {
+            &.right-reset {
+                right:20px;
+            }
+        }
+        .configu-table {
+            padding:30px 0 0;
+            margin-bottom: 45px;
+            .content-config {
+                margin:0;
+            }
+        }
+        .total-area,
+        .box-cart-new {
+            border:0;
+        }
+    }
+    .table-tier {
+        padding: 0 20px;
+        border: 1px solid #c1c1c1;
+        table {
+            tbody {
+                tr {
+                    td {
+                        border-bottom: 1px solid #c1c1c1;
+                        &:last-child {
+                            border-top:1px solid #c1c1c1!important;
+                        }
+                    }
+                    &:last-child {
+                        td {
+                            border-bottom:0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .cart.table-wrapper {
+        .col {
+            &.qty,
+            &.price,
+            &.subtotal,
+            &.msrp {
+                display: table-cell!important;
+                float:none!important;
+                white-space: initial!important;
+                width: auto!important;
+            }
+        }
+    }
+}
